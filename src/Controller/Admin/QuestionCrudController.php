@@ -26,7 +26,9 @@ class QuestionCrudController extends AbstractCrudController
     {
         yield IdField::new('id')
             ->onlyOnIndex();
-        yield Field::new('name');
+        yield Field::new('name')
+            ->setSortable(false)
+        ;
         yield Field::new('slug')
              ->setFormTypeOption(
                  'disabled',
@@ -37,6 +39,16 @@ class QuestionCrudController extends AbstractCrudController
         yield AssociationField::new('topic');
         yield TextareaField::new('question')
             ->hideOnIndex()
+            ->setFormTypeOptions([
+                'row_attr' => [
+                    'data-controller' => 'snarkdown',
+                ],
+                'attr' => [
+                    'data-snarkdown-target' => 'input',
+                    'data-action' => 'snarkdown#render'
+                ]
+            ])
+            ->setHelp('Preview:')
         ;
         yield VotesField::new('votes', 'Total Votes')
             ->setTextAlign('right');
@@ -65,6 +77,16 @@ class QuestionCrudController extends AbstractCrudController
         ;
         yield Field::new('createdAt')
             ->hideOnForm()
+        ;
+    }
+
+    public function configureCrud (Crud $crud): Crud
+    {
+        return parent::configureCrud($crud)
+            ->setDefaultSort([
+                'askedBy.enabled' => 'DESC',
+                'createdAt' => 'DESC',
+            ])
         ;
     }
 }

@@ -80,6 +80,16 @@ class DashboardController extends AbstractDashboardController
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
     }
 
+    public function configureCrud (): Crud
+    {
+        return parent::configureCrud()
+            ->setDefaultSort([
+                'id' => 'DESC'
+            ])
+        ;
+    }
+
+
     public function configureActions (): Actions
     {
         return parent::configureActions()
