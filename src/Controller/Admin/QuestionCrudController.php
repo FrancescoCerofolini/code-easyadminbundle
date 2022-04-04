@@ -2,8 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use App\EasyAdmin\VotesField;
 use App\Entity\Question;
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -25,11 +27,18 @@ class QuestionCrudController extends AbstractCrudController
         yield IdField::new('id')
             ->onlyOnIndex();
         yield Field::new('name');
+        yield Field::new('slug')
+             ->setFormTypeOption(
+                 'disabled',
+                 $pageName !== Crud::PAGE_NEW
+             )
+            ->hideOnIndex()
+        ;
         yield AssociationField::new('topic');
         yield TextareaField::new('question')
             ->hideOnIndex()
         ;
-        yield Field::new('votes', 'Total Votes')
+        yield VotesField::new('votes', 'Total Votes')
             ->setTextAlign('right');
         ;
         yield AssociationField::new('askedBy')
@@ -50,7 +59,10 @@ class QuestionCrudController extends AbstractCrudController
             ;
         })
         ;
-
+        yield AssociationField::new('answers')
+            ->autocomplete()
+            ->setFormTypeOption('by_reference', false)
+        ;
         yield Field::new('createdAt')
             ->hideOnForm()
         ;
